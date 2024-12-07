@@ -319,7 +319,7 @@ def loja(jogador):
             print("[2] Poção de MP (20 ouros)")
             print("[0] Sair da loja")
             print("-=" * 30)
-            escolha = int(input("Digite qual deseja comprar"))
+            escolha = int(input("Digite qual deseja comprar: "))
             if escolha == 1:
                 if jogador.ouro >= 30:
                     pocao_hp = Item("Poção de HP", lambda alvo: alvo.recuperar_hp(50), 1)
@@ -335,10 +335,10 @@ def loja(jogador):
                     pocao_mp = Item("Poção de MP", lambda alvo: alvo.recuperar_mp(50), 1)
                     jogador.ouro -= 20
                     jogador.adicionar_item(pocao_mp)
-                    print("Comprado HP POTION")
+                    print("Comprado MP POTION")
                     input("Aperte enter pra continuar")
                 else:
-                    print("Você não tem ouro suficiente")
+                    print("Você não tem ouro suficiente ")
                     input("Aperte enter pra continuar")
 
             elif escolha == 0:
