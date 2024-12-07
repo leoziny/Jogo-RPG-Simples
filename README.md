@@ -1,25 +1,26 @@
+# RPG de Texto: 
+
+Bem-vindo ao RPG de Texto:! Este é um jogo de RPG baseado em turnos com combate, gerenciamento de inventário e sistema de loja. O jogo permite ao jogador lutar contra monstros, ganhar experiência, subir de nível, comprar itens e muito mais. Abaixo estão informações detalhadas sobre o projeto e como instalá-lo e executá-lo.
 
 
-# Jogo de Aventura - Combate RPG
+## Sobre o Jogo
+é um RPG de texto clássico, onde os jogadores assumem o papel de um aventureiro em busca de glória e fortuna. O jogo envolve exploração, combate, gerenciamento de inventário, uso de itens e enfrentamento de inimigos. Cada decisão importa e pode moldar a trajetória do seu personagem.
 
-Este é um jogo de combate baseado em turnos, no qual o jogador assume o papel de um personagem lutando contra um monstro. O objetivo é derrotar o monstro, usando diferentes habilidades e estratégias, enquanto gerencia recursos como HP (vida), MP (mana) e suas escolhas durante o combate. O jogo inclui ataques padrão, ataques especiais, defesas e até a possibilidade de fugir, tudo isso influenciado por probabilidades dinâmicas.
+## Requisitos do Sistema
+- Python 3.x (verifique se o Python está instalado na sua máquina)
+- Sistema operacional: Windows, macOS ou Linux
 
-## Funcionalidades principais
+## Instalação
+1. Clone o repositório:
+   ```bash
+  git clone https://github.com/seu-usuario/seu-repositorio.git
+  cd nome-do-repositorio
+  inicie o jogo:
+  python main.py
 
-Ataques Padrão: O jogador pode atacar o monstro com diferentes níveis de dano, dependendo de sua sorte e probabilidades.
-Ataques Especiais: Habilidades como "Bola de Fogo" (dano ao monstro) e "Cura" (restaurar HP do jogador), com custos de MP.
-Defesa: O jogador pode tentar se defender, com chances de sucesso ou falha, dependendo da sorte.
-Fuga: O jogador tem a opção de tentar fugir, com uma chance de sucesso dependendo da situação.
-Recuperação do Monstro: O monstro pode se curar durante a luta, o que torna o combate ainda mais desafiador.
-Probabilidades Dinâmicas: O jogo é fortemente influenciado por probabilidades, tornando cada batalha única e imprevisível.
-Mecânicas
-HP: A saúde do jogador e do monstro são monitoradas, e se o HP do jogador chegar a zero, o jogo termina com uma mensagem de derrota.
-MP: A mana é consumida ao usar habilidades especiais, e o jogador precisa gerenciar seu MP para não ficar sem opções durante a batalha.
-Cura do Monstro: O monstro pode recuperar HP com base em uma probabilidade específica, o que pode mudar o rumo da luta.
-
-## Como Jogar
-
-Escolha sua ação durante a batalha: atacar, defender, fugir ou usar um ataque especial.
-Gerencie seu HP e MP para garantir que você sobreviva e tenha energia suficiente para usar suas habilidades.
-Enfrente um monstro desafiador e tente derrotá-lo antes que ele faça o mesmo com você!
-O jogo continua até que o monstro seja derrotado ou o jogador morra.
+## Uso
+Início: Após executar o jogo, insira o nome do seu personagem e comece sua jornada.
+Menu Principal: Utilize o menu principal para verificar o status do personagem, procurar monstros, curar-se, usar itens ou acessar a loja.
+Combate: Enfrente monstros aleatórios para ganhar experiência, ouro e itens. Use a interface para escolher ataques, defesas ou fugir do combate.
+Gerenciamento de Inventário: No inventário, você pode usar itens como poções de cura e maná. Gerencie itens para melhorar suas estatísticas.
+Loja: Acesse a loja para comprar poções, armas e outros itens que podem ajudar em sua aventura.
