@@ -48,7 +48,7 @@ def usar_item(jogador):
 
 # Função para criar monstros aleatórios com nome, HP e MP
 def criar_monstro():
-    nomes_monstros = ["Goblin", "Ogro", "Chefão", "Lobo Selvagem", "Dragão Bebê", "Gnomo"]
+    nomes_monstros = ["Goblin", "Ogro", "Chefão", "Lobo Selvagem", "Dragão Bebê", "Gnomo", "Dragão de komodo"]
     nome = random.choice(nomes_monstros)
     hp = random.randint(80, 200)
     mp = 0
@@ -146,7 +146,7 @@ class Jogador(Personagem):
 
     # Métodos para ataque e cura
     def ataque_padrao(self):
-        return random.randint(int(0.4 * self.hp), int(0.5 * self.hp))
+        return random.randint(int(0.2 * self.hp), int(0.4 * self.hp))
 
     def ataque_especial(self, inimigo):
         if self.mp >= 50:
@@ -171,7 +171,7 @@ class Monstro(Personagem):
         super().__init__(nome, hp, mp)
 
     def ataque(self):
-        return random.randint(int(0.2 * self.hp), int(0.5 * self.hp))
+        return random.randint(int(0.2 * self.hp), int(0.4 * self.hp))
 
     def recuperar_vida(self):
         if random.random() > 0.9:
@@ -254,8 +254,15 @@ def batalha(jogador, monstro):
         jogador.ganhar_exp(exp_ganha)
         if random.random() > 0.7:  # 30% de chance de encontrar um item
             item = item_aleatorio()
-            jogador.adicionar_item(item)
-            print(Color.OKGREEN + f"Você encontrou {item.quantidade}x {item.nome}!" + Color.END)
+            encontrado = False
+            for itens in jogador.inventario:
+                if itens.nome == item.nome:
+                    itens.quantidade +=1
+                    encontrado = True
+                    break
+            if not encontrado:
+                jogador.adicionar_item(item)
+
         input("Aperte para continuar")
     elif jogador.esta_vivo() and fugir:
         print("Você Escapou com sucesso")
@@ -309,10 +316,10 @@ def menu_principal(jogador):
         else:
             print("Escolha inválida.")
             input("\nPressione Enter para continuar...")
-
 def loja(jogador):
     while True:
         try:
+            limpar_tela()
             print("-=" * 30)
             print("Você tem ", jogador.ouro, " de ouro ")
             print("[1] Poção de HP (30 ouros)")
@@ -322,9 +329,16 @@ def loja(jogador):
             escolha = int(input("Digite qual deseja comprar: "))
             if escolha == 1:
                 if jogador.ouro >= 30:
-                    pocao_hp = Item("Poção de HP", lambda alvo: alvo.recuperar_hp(50), 1)
                     jogador.ouro -= 30
-                    jogador.adicionar_item(pocao_hp)
+                    encontrado = False
+                    for itens in jogador.inventario:
+                        if itens.nome == "Poção de HP":
+                            itens.quantidade += 1
+                            encontrado = True
+                            break
+                    if not encontrado:
+                        pocao_hp = Item("Poção de HP", lambda alvo: alvo.recuperar_hp(50), 1)
+                        jogador.adicionar_item(pocao_hp)
                     print("Comprado HP POTION")
                     input("Aperte enter pra continuar")
                 else:
@@ -332,22 +346,29 @@ def loja(jogador):
                     input("Aperte enter pra continuar")
             elif escolha == 2:
                 if jogador.ouro >= 20:
-                    pocao_mp = Item("Poção de MP", lambda alvo: alvo.recuperar_mp(50), 1)
+                    encontrado = False
                     jogador.ouro -= 20
-                    jogador.adicionar_item(pocao_mp)
+                    for itens in jogador.inventario:
+                        if itens.nome == "Poção de MP":
+                            itens.quantidade += 1
+                            encontrado = True
+                            break
+                    if not encontrado:
+                        pocao_mp = Item("Poção de MP", lambda alvo: alvo.recuperar_mp(50), 1)
+                        jogador.adicionar_item(pocao_mp)
                     print("Comprado MP POTION")
                     input("Aperte enter pra continuar")
                 else:
-                    print("Você não tem ouro suficiente ")
+                    print("Você não tem ouro suficiente")
                     input("Aperte enter pra continuar")
-
             elif escolha == 0:
                 print("Saindo da loja...")
                 break
             else:
                 print("Digite um valor válido")
         except ValueError:
-            print("Digite um numero válido")
+            print("Digite um número válido")
+
 
 
 # Função principal para iniciar o jogo
