@@ -32,12 +32,17 @@ def usar_item(jogador):
                             jogador.inventario.pop(item_escolhido)
                     else:
                         print("Você não tem mais esse item")
+                elif item.tipo == "arma":
+                    jogador.equipar(item)
+                    print("Arma equipada!")
+                    jogador.inventario.pop(item_escolhido)
+                    input()
                 else:
                     item.usar(jogador)
                     if item.quantidade == 0:
                         jogador.inventario.pop(item_escolhido)
             elif item_escolhido == 98:  # 99 - 1
-                print("Saindo...")
+                print("Saindo...")   
             else:
                 print(Color.FAIL + "Item inválido." + Color.END)
         except ValueError:
@@ -60,10 +65,11 @@ def item_aleatorio():
     return Item(nome, efeito, quantidade)
 # Classe para representar itens
 class Item:
-    def __init__(self, nome, efeito, quantidade):
+    def __init__(self, nome, efeito, quantidade, tipo=None):
         self.nome = nome  # Nome do item
         self.efeito = efeito  # Função que define o efeito do item
         self.quantidade = quantidade  # Quantidade disponível do item
+        self.tipo = tipo
 
     def usar(self, alvo):
         if self.quantidade > 0:
@@ -81,6 +87,7 @@ class Personagem:
         self.mp = mp
         self.hp_max = hp
         self.mp_max = mp
+        self.atq = 20
         self.nivel = 1
         self.exp = 0
         self.exp_proximo_nivel = 100
@@ -101,9 +108,11 @@ class Personagem:
         self.mp_max += aumento_mp
         self.hp = self.hp_max
         self.mp = self.mp_max
+        self.atq += random.randint(10,15)
         print(Color.OKGREEN + f"Parabéns! Você subiu para o nível {self.nivel}!" + Color.END)
         print(f"Seu HP máximo aumentou para {self.hp_max}.")
         print(f"Seu MP máximo aumentou para {self.mp_max}.")
+        
     # Métodos para gerenciar dano, cura e mana
     def receber_dano(self, dano):
         self.hp -= dano
@@ -133,20 +142,34 @@ class Jogador(Personagem):
         super().__init__(nome, hp, mp)
         self.ouro = 0
         self.inventario = []  # Inventário do jogador para armazenar itens
+        self.arma = None
 
     # Adiciona um item ao inventário
     def adicionar_item(self, item):
         self.inventario.append(item)
+    def equipar(self, item):
+        self.arma = item
+        self.atq += 15
+    def desequipar(self):
+        self.arma = None
+
 
     # Mostra o inventário com a quantidade de cada item
     def mostrar_inventario(self):
         print(Color.OKBLUE + "Seu inventário:" + Color.END)
         for i, item in enumerate(self.inventario, 1):
             print(f"[{i}] {item.nome} (Quantidade: {item.quantidade})")
+    def equipar_item(self, item):
+        if item in self.inventario:
+            self.inventario.remove(item)
+            self.equipado = item
+            print(f"{self.nome} equipou {item}.")
+        else:
+            print(f"{item} não está no inventário!")
 
     # Métodos para ataque e cura
     def ataque_padrao(self):
-        return random.randint(int(0.2 * self.hp), int(0.4 * self.hp))
+        return random.randint(20,50) + self.atq
 
     def ataque_especial(self, inimigo):
         if self.mp >= 50:
@@ -162,7 +185,7 @@ class Jogador(Personagem):
             cura = self.hp_max - self.hp
             self.recuperar_hp(cura)
             self.mp -= 100
-        else:
+        else:   
             print(Color.FAIL + "Mana insuficiente para curar!" + Color.END)
 
 # Classe para monstros, herda de Personagem
@@ -171,7 +194,7 @@ class Monstro(Personagem):
         super().__init__(nome, hp, mp)
 
     def ataque(self):
-        return random.randint(int(0.2 * self.hp), int(0.4 * self.hp))
+        return random.randint(20,40)
 
     def recuperar_vida(self):
         if random.random() > 0.9:
@@ -243,11 +266,7 @@ def batalha(jogador, monstro):
         aumento_hp = random.randint(5, 10)
         aumento_mp = random.randint(5, 10)
         ouro_ganhado = random.randint(10,30)
-        jogador.hp_max += aumento_hp
-        jogador.mp_max += aumento_mp
         jogador.ouro += ouro_ganhado
-        print(f"Seu HP máximo aumentou em {aumento_hp}, agora é {jogador.hp_max}!")
-        print(f"Seu MP máximo aumentou em {aumento_mp}, agora é {jogador.mp_max}!")
         print(f"Você ganhou {ouro_ganhado} de ouro!")
 
         exp_ganha = random.randint(20, 50)  # Experiência ganha ao derrotar o monstro
@@ -317,57 +336,51 @@ def menu_principal(jogador):
             print("Escolha inválida.")
             input("\nPressione Enter para continuar...")
 def loja(jogador):
+    itens_loja = [
+        Item("Poção de Vida", lambda alvo: alvo.recuperar_hp(50), 1),
+        Item("Poção de Mana", lambda alvo: alvo.recuperar_mp(50), 1),
+        Item("Espada de Madeira", lambda alvo: print(Color.OKGREEN + "Você agora tem uma arma melhor!" + Color.END), 1, tipo="arma"),
+    ]
+    precos = [50, 50, 20]  # Preços correspondentes aos itens
+
     while True:
+        limpar_tela()
+        print(Color.HEADER + "Bem-vindo à Loja!" + Color.END)
+        print(f"Ouro disponível: {jogador.ouro}")
+        print("-=" * 20)
+
+        for i, item in enumerate(itens_loja, 1):
+            print(f"[{i}] {item.nome} - {precos[i-1]} ouro")
+        print("[0] Sair da Loja")
+        print("-=" * 20)
+
         try:
-            limpar_tela()
-            print("-=" * 30)
-            print("Você tem ", jogador.ouro, " de ouro ")
-            print("[1] Poção de HP (30 ouros)")
-            print("[2] Poção de MP (20 ouros)")
-            print("[0] Sair da loja")
-            print("-=" * 30)
-            escolha = int(input("Digite qual deseja comprar: "))
-            if escolha == 1:
-                if jogador.ouro >= 30:
-                    jogador.ouro -= 30
-                    encontrado = False
-                    for itens in jogador.inventario:
-                        if itens.nome == "Poção de HP":
-                            itens.quantidade += 1
-                            encontrado = True
-                            break
-                    if not encontrado:
-                        pocao_hp = Item("Poção de HP", lambda alvo: alvo.recuperar_hp(50), 1)
-                        jogador.adicionar_item(pocao_hp)
-                    print("Comprado HP POTION")
-                    input("Aperte enter pra continuar")
-                else:
-                    print("Você não tem ouro suficiente")
-                    input("Aperte enter pra continuar")
-            elif escolha == 2:
-                if jogador.ouro >= 20:
-                    encontrado = False
-                    jogador.ouro -= 20
-                    for itens in jogador.inventario:
-                        if itens.nome == "Poção de MP":
-                            itens.quantidade += 1
-                            encontrado = True
-                            break
-                    if not encontrado:
-                        pocao_mp = Item("Poção de MP", lambda alvo: alvo.recuperar_mp(50), 1)
-                        jogador.adicionar_item(pocao_mp)
-                    print("Comprado MP POTION")
-                    input("Aperte enter pra continuar")
-                else:
-                    print("Você não tem ouro suficiente")
-                    input("Aperte enter pra continuar")
-            elif escolha == 0:
+            escolha = int(input(Color.OKBLUE + "Digite o número do item que deseja comprar: " + Color.END))
+            if escolha == 0:
                 print("Saindo da loja...")
                 break
+            elif 1 <= escolha <= len(itens_loja):
+                preco = precos[escolha - 1]
+                if jogador.ouro >= preco:
+                    jogador.ouro -= preco
+                    item_comprado = itens_loja[escolha - 1]
+                    encontrado = False
+                    for item in jogador.inventario:
+                        if item.nome == item_comprado.nome:
+                            item.quantidade += item_comprado.quantidade
+                            encontrado = True
+                            break
+                    if not encontrado:
+                        jogador.adicionar_item(item_comprado)
+                    print(Color.OKGREEN + f"Você comprou {item_comprado.nome}!" + Color.END)
+                else:
+                    print(Color.FAIL + "Ouro insuficiente!" + Color.END)
             else:
-                print("Digite um valor válido")
+                print(Color.FAIL + "Opção inválida!" + Color.END)
         except ValueError:
-            print("Digite um número válido")
+            print(Color.FAIL + "Entrada inválida. Tente novamente!" + Color.END)
+
+        input("\nPressione Enter para continuar...")
 
 
 
@@ -379,12 +392,12 @@ def main():
     jogador = Jogador(nome, 200, 100)
 
     # Criando itens iniciais
-    pocao_hp = Item("Poção de HP", lambda alvo: alvo.recuperar_hp(50), 3)
-    pocao_mp = Item("Poção de MP", lambda alvo: alvo.recuperar_mp(30), 2)
+    pocao_hp = Item("Poção de Vida", lambda alvo: alvo.recuperar_hp(50), 3)
+    pocao_mp = Item("Poção de Mana", lambda alvo: alvo.recuperar_mp(50), 2)
     jogador.adicionar_item(pocao_hp)
     jogador.adicionar_item(pocao_mp)
 
     menu_principal(jogador)
 
 if __name__ == "__main__":
-    main()
+    main()  
